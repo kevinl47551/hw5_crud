@@ -11,12 +11,12 @@ app.use(express.json())
 MongoClient.connect('mongodb+srv://kl47551:kl@cluster0.kjgvem0.mongodb.net/?appName=Cluster0')
   .then(client => {
     // ...
-    const db = client.db('star-wars-quotes')
-    const quotesCollection = db.collection('quotes')
+    const db = client.db('idea-tracker')
+    const ideasCollection = db.collection('ideas')
    
 
-    app.post('/quotes', (req, res) => {
-    quotesCollection
+    app.post('/ideas', (req, res) => {
+    ideasCollection
         .insertOne(req.body)
         .then(result => {
         res.redirect('/')
@@ -25,24 +25,24 @@ MongoClient.connect('mongodb+srv://kl47551:kl@cluster0.kjgvem0.mongodb.net/?appN
     })
 
     app.get('/', (req, res) => {
-        db.collection('quotes')
+        db.collection('ideas')
             .find()
             .toArray()
             .then(results => {
-                res.render('index.ejs', { quotes: results })
+                res.render('index.ejs', { ideas: results })
             })
             .catch(error => console.error(error))
     })
     
 
-    app.put('/quotes', (req, res) => {
+    app.put('/ideas', (req, res) => {
         console.log(req.body)
-        quotesCollection
+        ideasCollection
             .findOneAndUpdate(
-                { name: 'Yoda' }, 
+                { title: req.body.oldTitle }, 
                 {$set: {
-                    name: req.body.name,
-                    quote: req.body.quote,
+                    title: req.body.title,
+                    description: req.body.description,
                 }},
                 {upsert: true,}
             )
@@ -53,14 +53,14 @@ MongoClient.connect('mongodb+srv://kl47551:kl@cluster0.kjgvem0.mongodb.net/?appN
     })
 
 
-    app.delete('/quotes', (req, res) => {
-        quotesCollection
-        .deleteOne({ name: req.body.name })
+    app.delete('/ideas', (req, res) => {
+        ideasCollection
+        .deleteOne({ titleDelete: req.body.title })
         .then(result => {
             if (result.deletedCount === 0) {
-                return res.json('No quote to delete')
+                return res.json('No idea to delete')
             }
-            res.json(`Deleted Darth Vader's quote`)
+            res.json(`Deleted idea`)
         })
         .catch(error => console.error(error))
     })

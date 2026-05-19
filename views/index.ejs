@@ -3,45 +3,46 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Star Wars Quote App</title>
+    <title>Ideas</title>
   </head>
 
   <body>
-    <h1>May Node and Express be with you.</h1>
+    <h1>Idea tracker</h1>
 
-    <form action="/quotes" method="POST">
-      <input type="text" placeholder="name" name="name" />
-      <input type="text" placeholder="quote" name="quote" />
+    <form action="/ideas" method="POST">
+      <input type="text" placeholder="Title" name="title" />
+      <input type="text" placeholder="Decription" name="description" />
       <button type="submit">Submit</button>
     </form>
-    <h2>Quotes</h2>
+    <h2>Ideas</h2>
 
-    <ul class="quotes">
+    <ul class="Ideas">
         <!-- Loop through quotes -->
-        <% for(var i = 0; i < quotes.length; i++) {%>
-        <li class="quote">
+        <% for(var i = 0; i < ideas.length; i++) {%>
+        <li class="ideas">
             <!-- Output name from the iterated quote object -->
-            <span><%= quotes[i].name %></span>:
+            <span><%= ideas[i].title %></span>:
             <!-- Output quote from the iterated quote object -->
-            <span><%= quotes[i].quote %></span>
+            <span><%= ideas[i].description %></span>
         </li>
         <% } %>
     </ul>
 
     <div>
-        <h2>Darth Vader invades!</h2>
-        <p>Replace first Yoda's quote with a quote written by Darth Vader</p>
-        <button id="update-button">Replace Yoda's quote</button>
+        <h2>Good Ideas</h2>
+        <p>Replace your first ideas with better ideas</p>
+        <input id="good" type="text" placeholder="title" name="oldTitle" />
+        <button id="update-button">Replace ideas</button>
     </div>
 
 
     <div>
-    <h2>Remove Darth Vader!</h2>
+    <h2>Remove idea</h2>
     <p>
-        Delete one Darth Vader's quote. Does nothing if there are no more Darth
-        Vader's quote
+        delete one of your ideas
     </p>
-    <button id="delete-button">Delete Darth Vader's quote</button>
+    <input id="delete" type="text" placeholder="title" name="titleDelete" />
+    <button id="delete-button">Delete idea</button>
     </div>
     <div id="message"></div>
 
