@@ -2,17 +2,11 @@ const express = require('express')
 const MongoClient = require('mongodb').MongoClient
 const app = express()
 
-app.listen(3000, function () {
-  console.log('listening on 3000')
-})
+app.set('view engine', 'ejs')
 
 app.use(express.urlencoded({ extended: true }))
-
-app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html')
-  // Note: __dirname is the current directory you're in. Try logging it and see what you get!
-  // Mine was '/Users/zellwk/Projects/demo-repos/crud-express-mongo' for this app.
-})
+app.use(express.static('public'))
+app.use(express.json())
 
 MongoClient.connect('mongodb+srv://kl47551:kl@cluster0.kjgvem0.mongodb.net/?appName=Cluster0')
   .then(client => {
@@ -25,10 +19,56 @@ MongoClient.connect('mongodb+srv://kl47551:kl@cluster0.kjgvem0.mongodb.net/?appN
     quotesCollection
         .insertOne(req.body)
         .then(result => {
-        console.log(result)
+        res.redirect('/')
         })
         .catch(error => console.error(error))
     })
+
+    app.get('/', (req, res) => {
+        db.collection('quotes')
+            .find()
+            .toArray()
+            .then(results => {
+                res.render('index.ejs', { quotes: results })
+            })
+            .catch(error => console.error(error))
+    })
     
+
+    app.put('/quotes', (req, res) => {
+        console.log(req.body)
+        quotesCollection
+            .findOneAndUpdate(
+                { name: 'Yoda' }, 
+                {$set: {
+                    name: req.body.name,
+                    quote: req.body.quote,
+                }},
+                {upsert: true,}
+            )
+            .then(result => {
+                res.json('Success')
+            })
+            .catch(error => console.error(error))
+    })
+
+
+    app.delete('/quotes', (req, res) => {
+        quotesCollection
+        .deleteOne({ name: req.body.name })
+        .then(result => {
+            if (result.deletedCount === 0) {
+                return res.json('No quote to delete')
+            }
+            res.json(`Deleted Darth Vader's quote`)
+        })
+        .catch(error => console.error(error))
+    })
+
   })
   .catch(console.error)
+
+
+app.listen(3000, function () {
+  console.log('listening on 3000')
+})
